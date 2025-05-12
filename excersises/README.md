@@ -198,4 +198,5 @@ Re-verify:
 
 ## (3) Exercise #2 - batch process exercise
 
-To be continued.
+There is a simple application data model:
+![Data model picture](z-test-batch-v2-small.jpg)
