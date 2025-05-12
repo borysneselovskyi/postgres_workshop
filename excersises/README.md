@@ -92,7 +92,7 @@ Review `TableAccess.java` (the Java test case - see: [TableAccess.java](TableAcc
 [Back to Exercise #1](#2-exercise-1---simple-performance-misbehavior)
 
 ### Step 3
-Compare with psql:
+Compare with psql, see [03-query-psql.sql](03-query-psql.sql):
 
 ```bash
 ./03-query-psql.sh
@@ -104,7 +104,7 @@ Compare with psql:
 [Back to Exercise #1](#2-exercise-1---simple-performance-misbehavior)
 
 ### Step 4
-Prime the cache with a different value and then test again:
+Prime the cache with a different value and then test again - see: [04-query-psql.sql](04-query-psql.sql):
 
 ```bash
 ./04-query-psql.sh  
@@ -128,7 +128,7 @@ Run the application for the same new key:
 [Back to Exercise #1](#2-exercise-1---simple-performance-misbehavior)
 
 ### Step 6
-Capture the execution plan:
+Capture the execution plan - see [06-explain-analyze.sql](06-explain-analyze.sql):
 
 ```bash
 ./06-explain-analyze.sh
@@ -141,7 +141,7 @@ Capture the execution plan:
 [Back to Exercise #1](#2-exercise-1---simple-performance-misbehavior)
 
 ### Step 7
-Inspect `pg_stat_statements` for query stats:
+Inspect `pg_stat_statements` for query stats - see [07-pg-stat-statements.sql](07-pg-stat-statements.sql):
 
 ```bash
 ./07-pg-stat-statements.sh
@@ -155,7 +155,7 @@ Inspect `pg_stat_statements` for query stats:
 [Back to Exercise #1](#2-exercise-1---simple-performance-misbehavior)
 
 ### Step 8
-Reproduce in psql with the application’s bind-variable type:
+Reproduce in psql with the application’s bind-variable type - see [08-gotit-explain-analyze.sql](08-gotit-explain-analyze.sql):
 
 ```bash
 ./08-gotit-explain-analyze.sh
@@ -166,7 +166,7 @@ Reproduce in psql with the application’s bind-variable type:
 [Back to Exercise #1](#2-exercise-1---simple-performance-misbehavior)
 
 ### Step 9
-Demonstrate the fix in application code (`ExplainTableBigInt.java`):
+Demonstrate the fix in application code (`ExplainTableBigInt.java`) - see [ExplainTableBigInt.java](ExplainTableBigInt.java):
 
 ```bash
 ./09-difference.sh
@@ -175,7 +175,7 @@ Demonstrate the fix in application code (`ExplainTableBigInt.java`):
 [Back to Exercise #1](#2-exercise-1---simple-performance-misbehavior)
 
 ### Step 10
-If you can’t fix the app quickly, add a functional index:
+If you can’t fix the app quickly, add a functional index - see: [10-hotfix-function-index.sql](10-hotfix-function-index.sql):
 
 ```bash
 ./10-hotfix-function-index.sh
