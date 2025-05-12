@@ -72,7 +72,7 @@ SHOW shared_preload_libraries;
 ```
 
 Any script or program below is run under `u1` Postgres user in `dev01` database.
-Any time you may like to connect to this database with `u1` role, please invoke the script
+Any time you would like to connect to this database with `u1` role, please invoke the script
 ```bash
 ./u1-psql.sh
 ```
