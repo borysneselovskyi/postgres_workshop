@@ -199,7 +199,7 @@ Re-verify:
 ## (3) Exercise #2 - batch process exercise
 
 There is a simple application data model:
-<p><img src="z-test-batch-v2-small.jpg" alt="Data Model Picture" width="640" /></p>
+<p><img src="z-test-batch-v2-small.jpg" alt="Data Model Picture" width="800" /></p>
 
 
 [Back to Table of contents](#table-of-contents)
