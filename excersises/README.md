@@ -475,11 +475,83 @@ Let's run `tst.proc_billing0` - we'll see what is the impact of the look-ups to 
 ./34-exec-proc-null-billing.sh
 ```
 
+[Back to Exercise #2](#3-exercise-2---batch-process-exercise)
+
 **Questions:**
 - What is its execution time? Please write it down and compare with the execution time from Step 3.
 - What are the potential conclusions?
 
- 
+### Step 6
+
+One of the ways to optimize the calls to look-up values is to store their values in the memory of the procedure.
+It is especially usefull for relatively small but very frequently accessed data sets. The configuration data, relat- ively static reference data sets like `tst.service_price` are some of the examples.
+
+We tried to reimplement the billing procedure to keep the relevant portion of `tst.service_price` table transformed to the in-memory format using the `HSTORE` variable. It is a hash table where the key will be derived from sname (service name) and cust_id. Please note, some customers may have their own pricing, if they do not have the pricing for cust_id=0 (DEFAULT) will be applied.
+
+The limitation of the model is the fact, that for matching cust_id we'll need to perform (linear) search through the pricing changes. In other words - longer period we process in billing, more pricing changes we had, less improvement we may get.
+
+See: [35-create-proc-opt1.sql](35-create-proc-opt1.sql)
+
+Let's create the other implementation of the billing procedure with the name of `tst.proc_billing4_1`
+
+```bash
+./35-create-proc-opt1.sh
+```
+[Back to Exercise #2](#3-exercise-2---batch-process-exercise)
+
+### Step 7
+
+Let's run `tst.proc_billing4_1`, using cached portion of the data from `tst.service` in `hstore` type procedure variable.
+We'll see what is the difference of the execution time compared to the result achieved in Step 3. The SQL script is [36-exec-proc-billing-opt1.sql](36-exec-proc-billing-opt1.sql)
+
+```bash
+./36-exec-proc-billing-opt1.sh
+```
+
+**Questions:**
+- What is its execution time? Please write it down and compare with the execution time from Step 3.
+- What are the potential conclusions?
+
+[Back to Exercise #2](#3-exercise-2---batch-process-exercise)
+
+### Step 8
+
+We tried to reimplement the billing procedure to keep the relevant portion of `tst.service_price` table transformed to the in-memory format using the JSONB variable addressed by a key derived from sname (service name) and cust_id.
+This is possible since Postgres 17.
+
+See: [37-create-proc-opt2.sql](37-create-proc-opt2.sql)
+
+Let's create the other implementation of the billing procedure with the name of `tst.proc_billing5_4`
+
+```bash
+./37-create-proc-opt2.sh
+```
+
+[Back to Exercise #2](#3-exercise-2---batch-process-exercise)
+
+### Step 9
+
+Let's run `tst.proc_billing5_4`, using cached portion of the data from `tst.service` in JSONB type procedure variable.
+We'll see what is the difference of the execution time compared to the result achieved in Step 3 and 7. The SQL script is [38-exec-proc-billing-opt2.sql](38-exec-proc-billing-opt2.sql)
+
+```bash
+./38-exec-proc-billing-opt2.sh
+```
+
+**Questions:**
+- What is its execution time? Please write it down and compare with the execution time from Step 3 and 7.
+- What are the potential conclusions?
+
+### Step 10 (optional)
+
+```bash
+./42-exec-proc-billing.sh          # similar to ./32-exec-proc-billing.sh, but for Q1 2024 only (not full 2024)
+./44-exec-proc-null-billing.sh     # similar to ./34-exec-proc-null-billing.sh, but for Q1 2024 only (not full 2024)
+./46-exec-proc-billing-opt1.sh     # similar to ./36-exec-proc-billing-opt1.sh, but for Q1 2024 only (not full 2024)
+./48-exec-proc-billing-opt2.sh     # similar to ./48-exec-proc-billing-opt2.sh, but for Q1 2024 only (not full 2024)
+```
+
+
 [Back to Exercise #2](#3-exercise-2---batch-process-exercise)
 
 [Back to Table of contents](#table-of-contents)
