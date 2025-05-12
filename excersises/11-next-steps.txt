@@ -1,0 +1,5 @@
+re-run steps:
+
+./02-app-behavior.sh
+./07-pg-stat-statements.sh
+./09-difference.sh
