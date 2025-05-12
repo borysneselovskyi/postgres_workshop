@@ -10,11 +10,12 @@
 
 ## (1) Before we begin
 
-The scripts are intended to be run from `exercises/` directory. In the shell, please change the current directory to it.
+The scripts are intended to be run from `$HOME/postgres_workshop/exercises/` directory (HOME variable is HOME of postgres Linux user). 
 
 Please make sure that the files have the appropriate permissions after unpacking or `git clone`:
 
 ```bash
+# As postgres user logged to lab machine
 cd $HOME/postgres_workshop/
 ln -s excersises exersises     # fix misspelled directory name
 cd exercises
