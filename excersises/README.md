@@ -51,7 +51,7 @@ vi postgresql.conf
 ## OR nano postgresql.conf  ## if you don't like vi
 ```
 
-Find and edit `shared_preload_libraries parameter`, uncomment it and edit as below:
+Find and edit `shared_preload_libraries` parameter, uncomment it and edit as below:
 ```
 shared_preload_libraries = 'pg_stat_statements'
 ```
@@ -78,15 +78,16 @@ SHOW shared_preload_libraries;
 
 The intro story (based on a real case):
 
-> You need to remediate a performance regression in production. Over time, a simple indexed query in the Java application has started taking longer than 4 seconds by default. The query is:
-> 
-> ```sql
-> SELECT *
->   FROM s1.tst_bind_bigint
->  WHERE ext_id = ?;
-> ```
->
-> Table definition:
+> You need to remediate a performance regression in production. Over time, a simple indexed query in the Java application has started taking longer than 4 seconds by default - noticed by the users, application retries and Postgres log. 
+
+<b>The query is very simple like below:</b>
+ 
+```sql
+SELECT *
+   FROM s1.tst_bind_bigint
+  WHERE ext_id = ?;
+```
+<b>The table definition:</b>
 
 ```sql
 \d+ s1.tst_bind_bigint
@@ -114,7 +115,7 @@ Create the schema and load a small portion of the data, see: [01-create-schema.s
 [Back to Exercise #1](#2-exercise-1---simple-performance-misbehavior)
 
 ### Step 2
-Review `TableAccess.java` (the Java test case - see: [TableAccess.java](TableAccess.java)) and run:
+Review the application test-case code `TableAccess.java` (see: [TableAccess.java](TableAccess.java)) and run:
 
 ```bash
 ./02-app-behavior.sh
@@ -123,19 +124,21 @@ Review `TableAccess.java` (the Java test case - see: [TableAccess.java](TableAcc
 
 **Questions:**
 - What is the execution time?
-- Is this acceptable? If not, why?
+- Is this normal according to the experience? If not, why?
 
 [Back to Exercise #1](#2-exercise-1---simple-performance-misbehavior)
 
 ### Step 3
-Compare with psql, see [03-query-psql.sql](03-query-psql.sql):
+Compare with the execution in `psql`, see [03-query-psql.sql](03-query-psql.sql):
 
 ```bash
 ./03-query-psql.sh
 ## runs: SELECT * FROM s1.tst_bind_bigint WHERE ext_id = 12345;
 ```
 
-**Question:** Any difference?
+**Question:** 
+- What are the differences and what could be the reasons?
+
 
 [Back to Exercise #1](#2-exercise-1---simple-performance-misbehavior)
 
@@ -164,7 +167,7 @@ Run the application for the same new key:
 [Back to Exercise #1](#2-exercise-1---simple-performance-misbehavior)
 
 ### Step 6
-Capture the execution plan - see [06-explain-analyze.sql](06-explain-analyze.sql):
+Capture the execution plan in `psql` - see [06-explain-analyze.sql](06-explain-analyze.sql):
 
 ```bash
 ./06-explain-analyze.sh
@@ -173,6 +176,7 @@ Capture the execution plan - see [06-explain-analyze.sql](06-explain-analyze.sql
 **Questions:**
 - What plan is used?
 - Does it use the index?
+- Any progress with explanations and remediations?
 
 [Back to Exercise #1](#2-exercise-1---simple-performance-misbehavior)
 
@@ -186,7 +190,7 @@ Inspect `pg_stat_statements` for query stats - see [07-pg-stat-statements.sql](0
 **Questions:**
 - What stands out?
 - Is the application’s query using the index?
-- How does the Java bind variable map to Postgres types?
+- How does the Java bind variable map to Postgres type? See [TableAccess.java](TableAccess.java) again?
 
 [Back to Exercise #1](#2-exercise-1---simple-performance-misbehavior)
 
