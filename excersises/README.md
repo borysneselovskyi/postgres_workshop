@@ -62,6 +62,7 @@ After saving this change to `postgresql.conf` file, please stop and start Postgr
 cd /var/lib/postgresql
 pg_ctl -D /opt/postgres/data stop
 pg_ctl -D /opt/postgres/data -l logfile start
+cd $HOME/postgres_workshop/exercises               # come back to the exercises dir
 ```
 
 Verify that the parameter is effective from psql after database server restart:
@@ -69,6 +70,13 @@ Verify that the parameter is effective from psql after database server restart:
 ```sql
 SHOW shared_preload_libraries;
 ```
+
+Any script or program below is run under `u1` Postgres user in `dev01` database.
+Any time you may like to connect to this database with `u1` role, please invoke the script
+```bash
+./u1-psql.sh
+```
+in the cd `$HOME/postgres_workshop/exercises` directory.
 
 [Back to Table of contents](#table-of-contents)
 
@@ -240,6 +248,182 @@ Re-verify:
 
 There is a simple application data model:
 <p><img src="z-test-batch-v2-small.jpg" alt="Data Model Picture" width="1024" /></p>
+
+We will pre-load the data for `tst.service`, `tst.service_price`, `tst.customer` and `tst.usage` tables in the Step 1.
+The tables `tst.usage` and `tst.billing` are range partitioned with range partions and the partitioning key is `ts` column which stands for the usage event date. These are monthly partitions for calendar year 2024.
+
+[Back to Exercise #2](#3-exercise-2---batch-process-exercise)
+
+### Step 1
+We will set-up `tst` schema and run data load. See SQL file: [30-create-schema.sql](30-create-schema.sql)
+
+**Questions:**
+- How the creation of the partitions is handled?
+- How the precision of partition end timestamp is handled?
+
+Run the creation script:
+```bash
+./30-create-schema.sh
+```
+
+After it, please verify the objects.
+
+Tables:
+
+```sql
+dev01=> \dt tst.*
+                  List of relations
+ Schema |      Name       |       Type        | Owner 
+--------+-----------------+-------------------+-------
+ tst    | billing         | partitioned table | u1
+ tst    | billing_2024_01 | table             | u1
+ tst    | billing_2024_02 | table             | u1
+ tst    | billing_2024_03 | table             | u1
+ tst    | billing_2024_04 | table             | u1
+ tst    | billing_2024_05 | table             | u1
+ tst    | billing_2024_06 | table             | u1
+ tst    | billing_2024_07 | table             | u1
+ tst    | billing_2024_08 | table             | u1
+ tst    | billing_2024_09 | table             | u1
+ tst    | billing_2024_10 | table             | u1
+ tst    | billing_2024_11 | table             | u1
+ tst    | billing_2024_12 | table             | u1
+ tst    | customer        | table             | u1
+ tst    | service         | table             | u1
+ tst    | service_price   | table             | u1
+ tst    | usage           | partitioned table | u1
+ tst    | usage_2024_01   | table             | u1
+ tst    | usage_2024_02   | table             | u1
+ tst    | usage_2024_03   | table             | u1
+ tst    | usage_2024_04   | table             | u1
+ tst    | usage_2024_05   | table             | u1
+ tst    | usage_2024_06   | table             | u1
+ tst    | usage_2024_07   | table             | u1
+ tst    | usage_2024_08   | table             | u1
+ tst    | usage_2024_09   | table             | u1
+ tst    | usage_2024_10   | table             | u1
+ tst    | usage_2024_11   | table             | u1
+ tst    | usage_2024_12   | table             | u1
+(29 rows)
+```
+
+Indexes:
+```sql
+dev01=> \di tst.*
+                                  List of relations
+ Schema |             Name              |       Type        | Owner |      Table      
+--------+-------------------------------+-------------------+-------+-----------------
+ tst    | billing_2024_01_customer_fk_i | index             | u1    | billing_2024_01
+ tst    | billing_2024_01_pkey          | index             | u1    | billing_2024_01
+ tst    | billing_2024_01_service_fk_i  | index             | u1    | billing_2024_01
+ tst    | billing_2024_02_customer_fk_i | index             | u1    | billing_2024_02
+ tst    | billing_2024_02_pkey          | index             | u1    | billing_2024_02
+ tst    | billing_2024_02_service_fk_i  | index             | u1    | billing_2024_02
+ tst    | billing_2024_03_customer_fk_i | index             | u1    | billing_2024_03
+ tst    | billing_2024_03_pkey          | index             | u1    | billing_2024_03
+ tst    | billing_2024_03_service_fk_i  | index             | u1    | billing_2024_03
+ tst    | billing_2024_04_customer_fk_i | index             | u1    | billing_2024_04
+ tst    | billing_2024_04_pkey          | index             | u1    | billing_2024_04
+ tst    | billing_2024_04_service_fk_i  | index             | u1    | billing_2024_04
+ tst    | billing_2024_05_customer_fk_i | index             | u1    | billing_2024_05
+ tst    | billing_2024_05_pkey          | index             | u1    | billing_2024_05
+ tst    | billing_2024_05_service_fk_i  | index             | u1    | billing_2024_05
+ tst    | billing_2024_06_customer_fk_i | index             | u1    | billing_2024_06
+ tst    | billing_2024_06_pkey          | index             | u1    | billing_2024_06
+ tst    | billing_2024_06_service_fk_i  | index             | u1    | billing_2024_06
+ tst    | billing_2024_07_customer_fk_i | index             | u1    | billing_2024_07
+ tst    | billing_2024_07_pkey          | index             | u1    | billing_2024_07
+ tst    | billing_2024_07_service_fk_i  | index             | u1    | billing_2024_07
+ tst    | billing_2024_08_customer_fk_i | index             | u1    | billing_2024_08
+ tst    | billing_2024_08_pkey          | index             | u1    | billing_2024_08
+ tst    | billing_2024_08_service_fk_i  | index             | u1    | billing_2024_08
+ tst    | billing_2024_09_customer_fk_i | index             | u1    | billing_2024_09
+ tst    | billing_2024_09_pkey          | index             | u1    | billing_2024_09
+ tst    | billing_2024_09_service_fk_i  | index             | u1    | billing_2024_09
+ tst    | billing_2024_10_customer_fk_i | index             | u1    | billing_2024_10
+ tst    | billing_2024_10_pkey          | index             | u1    | billing_2024_10
+ tst    | billing_2024_10_service_fk_i  | index             | u1    | billing_2024_10
+ tst    | billing_2024_11_customer_fk_i | index             | u1    | billing_2024_11
+ tst    | billing_2024_11_pkey          | index             | u1    | billing_2024_11
+ tst    | billing_2024_11_service_fk_i  | index             | u1    | billing_2024_11
+ tst    | billing_2024_12_customer_fk_i | index             | u1    | billing_2024_12
+ tst    | billing_2024_12_pkey          | index             | u1    | billing_2024_12
+ tst    | billing_2024_12_service_fk_i  | index             | u1    | billing_2024_12
+ tst    | billing_pk                    | partitioned index | u1    | billing
+ tst    | customer_cust_name_key        | index             | u1    | customer
+ tst    | customer_pkey                 | index             | u1    | customer
+ tst    | service_full_name_key         | index             | u1    | service
+ tst    | service_pkey                  | index             | u1    | service
+ tst    | service_price_customer_fk_i   | index             | u1    | service_price
+ tst    | service_price_i1              | index             | u1    | service_price
+ tst    | service_price_service_fk_i    | index             | u1    | service_price
+ tst    | usage_2024_01_customer_fk_i   | index             | u1    | usage_2024_01
+ tst    | usage_2024_01_pkey            | index             | u1    | usage_2024_01
+ tst    | usage_2024_01_service_fk_i    | index             | u1    | usage_2024_01
+ tst    | usage_2024_02_customer_fk_i   | index             | u1    | usage_2024_02
+ tst    | usage_2024_02_pkey            | index             | u1    | usage_2024_02
+ tst    | usage_2024_02_service_fk_i    | index             | u1    | usage_2024_02
+ tst    | usage_2024_03_customer_fk_i   | index             | u1    | usage_2024_03
+ tst    | usage_2024_03_pkey            | index             | u1    | usage_2024_03
+ tst    | usage_2024_03_service_fk_i    | index             | u1    | usage_2024_03
+ tst    | usage_2024_04_customer_fk_i   | index             | u1    | usage_2024_04
+ tst    | usage_2024_04_pkey            | index             | u1    | usage_2024_04
+ tst    | usage_2024_04_service_fk_i    | index             | u1    | usage_2024_04
+ tst    | usage_2024_05_customer_fk_i   | index             | u1    | usage_2024_05
+ tst    | usage_2024_05_pkey            | index             | u1    | usage_2024_05
+ tst    | usage_2024_05_service_fk_i    | index             | u1    | usage_2024_05
+ tst    | usage_2024_06_customer_fk_i   | index             | u1    | usage_2024_06
+ tst    | usage_2024_06_pkey            | index             | u1    | usage_2024_06
+ tst    | usage_2024_06_service_fk_i    | index             | u1    | usage_2024_06
+ tst    | usage_2024_07_customer_fk_i   | index             | u1    | usage_2024_07
+ tst    | usage_2024_07_pkey            | index             | u1    | usage_2024_07
+ tst    | usage_2024_07_service_fk_i    | index             | u1    | usage_2024_07
+ tst    | usage_2024_08_customer_fk_i   | index             | u1    | usage_2024_08
+ tst    | usage_2024_08_pkey            | index             | u1    | usage_2024_08
+ tst    | usage_2024_08_service_fk_i    | index             | u1    | usage_2024_08
+ tst    | usage_2024_09_customer_fk_i   | index             | u1    | usage_2024_09
+ tst    | usage_2024_09_pkey            | index             | u1    | usage_2024_09
+ tst    | usage_2024_09_service_fk_i    | index             | u1    | usage_2024_09
+ tst    | usage_2024_10_customer_fk_i   | index             | u1    | usage_2024_10
+ tst    | usage_2024_10_pkey            | index             | u1    | usage_2024_10
+ tst    | usage_2024_10_service_fk_i    | index             | u1    | usage_2024_10
+ tst    | usage_2024_11_customer_fk_i   | index             | u1    | usage_2024_11
+ tst    | usage_2024_11_pkey            | index             | u1    | usage_2024_11
+ tst    | usage_2024_11_service_fk_i    | index             | u1    | usage_2024_11
+ tst    | usage_2024_12_customer_fk_i   | index             | u1    | usage_2024_12
+ tst    | usage_2024_12_pkey            | index             | u1    | usage_2024_12
+ tst    | usage_2024_12_service_fk_i    | index             | u1    | usage_2024_12
+ tst    | usage_pk                      | partitioned index | u1    | usage
+(81 rows)
+```
+
+Record count:
+```sql
+dev01=> select count(*) from tst.service;
+ count 
+-------
+    50
+(1 row)
+
+dev01=> select count(*) from tst.service_price;
+ count 
+-------
+  2490
+(1 row)
+
+dev01=> select count(*) from tst.customer;
+ count 
+-------
+  2001
+(1 row)
+
+dev01=> select count(*) from tst.usage;
+  count  
+---------
+ 1000000
+(1 row)
+```
+
 
 
 [Back to Table of contents](#table-of-contents)
