@@ -69,7 +69,7 @@ Indexes:
 What could go wrong?
 
 ### Step 1
-Create the schema and load a small portion of the data, see: [Link text](01-create-schema.sql)
+Create the schema and load a small portion of the data, see: [01-create-schema.sql](01-create-schema.sql)
 
 ```bash
 ./01-create-schema.sh
@@ -78,7 +78,7 @@ Create the schema and load a small portion of the data, see: [Link text](01-crea
 [Back to Exercise #1](#2-exercise-1---simple-performance-misbehavior)
 
 ### Step 2
-Review `TableAccess.class` (the Java test case) and run:
+Review `TableAccess.java` (the Java test case - see: [TableAccess.java](TableAccess.java)) and run:
 
 ```bash
 ./02-app-behavior.sh
