@@ -266,7 +266,10 @@ Run the creation script:
 ./30-create-schema.sh
 ```
 
-After it, please verify the objects.
+After it, please verify the objects by using psql command connecting to `dev01` database as `u1` user:
+```bash
+./u1-psql.sh
+```
 
 Tables:
 
@@ -424,6 +427,59 @@ dev01=> select count(*) from tst.usage;
 (1 row)
 ```
 
+[Back to Exercise #2](#3-exercise-2---batch-process-exercise)
 
+### Step 2
+Let's try the first implementation. See SQL file: [31-create-proc-billing.sql](31-create-proc-billing.sql)
+
+For every row in usage that is not billed, we select the appropriate unit price in `tst.service_price`. It is a very classic way of implementation.
+
+Let's create the procedure `tst.proc_billing` by running the script:
+```bash
+./31-create-proc-billing.sh
+```
+
+[Back to Exercise #2](#3-exercise-2---batch-process-exercise)
+
+### Step 3
+Once we run the `31-create-proc-billing.sh` script and `tst.proc_billing` procedure is created, let's run the whole year billing by calling it `call tst.proc_billing (date '2024-01-01', date '2024-12-31', 0);`
+
+The script `32-exec-proc-billing.sh` truncates `tst.billing` table, sets the \timing on` and calls the procedure - see: [32-exec-proc-billing.sql](32-exec-proc-billing.sql)
+
+```bash
+./32-exec-proc-billing.sh
+```
+
+**Questions:**
+- What is its execution time? Please write it down.
+- How can it be improved?
+
+[Back to Exercise #2](#3-exercise-2---batch-process-exercise)
+
+### Step 4
+
+We might have many concepts. Let's create the procedure `tst.proc_billing0`, that just reads the unbilled `tst.usage` rows and uses an artificially constant unit price (skipping lookups to `tst.service_price`). It will indicate us some performance limits.
+See: [33-create-proc-null-billing.sql](33-create-proc-null-billing.sql)
+
+```bash
+./33-create-proc-null-billing.sh
+```
+
+[Back to Exercise #2](#3-exercise-2---batch-process-exercise)
+
+### Step 5
+
+Let's run `tst.proc_billing0` - we'll see what is the impact of the look-ups to service unit prices by comparing this execution time with the time got in Step 3. The SQL script is [34-exec-proc-null-billing.sql](34-exec-proc-null-billing.sql)
+
+```bash
+./34-exec-proc-null-billing.sh
+```
+
+**Questions:**
+- What is its execution time? Please write it down and compare with the execution time from Step 3.
+- What are the potential conclusions?
+
+ 
+[Back to Exercise #2](#3-exercise-2---batch-process-exercise)
 
 [Back to Table of contents](#table-of-contents)
