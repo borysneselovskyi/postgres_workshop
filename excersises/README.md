@@ -69,7 +69,7 @@ Indexes:
 What could go wrong?
 
 ### Step 1
-Create the schema and load a small portion of the data:
+Create the schema and load a small portion of the data, see: [Link text](01-create-schema.sql)
 
 ```bash
 ./01-create-schema.sh
