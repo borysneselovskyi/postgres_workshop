@@ -34,6 +34,28 @@ Verify you can connect to the `dev01` Postgres database as `u1` by running:
 ./u1-psql.sh
 ```
 
+Important remark for the training!!!
+
+```bash
+cd /opt/postgres/data
+cp postgresql.conf postgresql.conf.backup
+vi postgresql.conf
+## OR nano postgresql.conf  ## if you don't like vi
+```
+
+Find and edit shared_preload_libraries parameters as below:
+```
+shared_preload_libraries = 'pg_stat_statements'
+```
+
+Then stop and start Postgres database
+
+```bash
+cd /var/lib/postgresql
+pg_ctl -D /opt/postgres/data stop
+pg_ctl -D /opt/postgres/data -l logfile start
+```
+
 [Back to Table of contents](#table-of-contents)
 
 ---
