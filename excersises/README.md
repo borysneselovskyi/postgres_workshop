@@ -16,7 +16,7 @@ Please make sure that the files have the appropriate permissions after unpacking
 
 ```bash
 cd exercises/
-chmod 0600 *.sql
+chmod 0600 *
 chmod 0700 *.sh
 ```
 
@@ -95,8 +95,8 @@ Review `TableAccess.class` (the Java test case) and run:
 Compare with psql:
 
 ```bash
-./03-query-psql.sql
--- runs: SELECT * FROM s1.tst_bind_bigint WHERE ext_id = 12345;
+./03-query-psql.sh
+## runs: SELECT * FROM s1.tst_bind_bigint WHERE ext_id = 12345;
 ```
 
 **Question:** Any difference?
@@ -107,7 +107,8 @@ Compare with psql:
 Prime the cache with a different value and then test again:
 
 ```bash
-./04-query-psql.sql  # uses ext_id = 44213
+./04-query-psql.sh  
+# uses ext_id = 44213
 ```
 
 [Back to Exercise #1](#2-exercise-1---simple-performance-misbehavior)
@@ -116,7 +117,8 @@ Prime the cache with a different value and then test again:
 Run the application for the same new key:
 
 ```bash
-./05-app-behavior.sh  # invokes: java TableAccess 44213
+./05-app-behavior.sh  
+# invokes: java TableAccess 44213
 ```
 
 **Questions:**
