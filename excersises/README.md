@@ -15,10 +15,14 @@ The scripts are intended to be run from `exercises/` directory. In the shell, pl
 Please make sure that the files have the appropriate permissions after unpacking or `git clone`:
 
 ```bash
-cd exercises/
+cd $HOME/postgres_workshop/
+ln -s excersises exersises     # fix misspelled directory name
+cd exercises
 chmod 0600 *
 chmod 0700 *.sh
 ```
+
+<b></u>Note:</u> All the exercises scripts are intended to be run from `$HOME/postgres_workshop/exercises` directory</b>
 
 As Postgres admin, please run script `00-setup.sql` to set up the `dev01` database and create the `u1` role:
 
@@ -34,7 +38,11 @@ Verify you can connect to the `dev01` Postgres database as `u1` by running:
 ./u1-psql.sh
 ```
 
-Important remark for the training!!!
+<b>Important remark for the training!!!</b>
+
+It might happen, that `pg_stat_statements` library is not configured in `shared_preload_libraries` Postgres settings. We need to add it to complete successfully Step 7 in Exercise 1.
+
+In the lab machine please do the following:
 
 ```bash
 cd /opt/postgres/data
@@ -43,17 +51,23 @@ vi postgresql.conf
 ## OR nano postgresql.conf  ## if you don't like vi
 ```
 
-Find and edit shared_preload_libraries parameters as below:
+Find and edit `shared_preload_libraries parameter`, uncomment it and edit as below:
 ```
 shared_preload_libraries = 'pg_stat_statements'
 ```
 
-Then stop and start Postgres database
+After saving this change to `postgresql.conf` file, please stop and start Postgres database:
 
 ```bash
 cd /var/lib/postgresql
 pg_ctl -D /opt/postgres/data stop
 pg_ctl -D /opt/postgres/data -l logfile start
+```
+
+Verify that the parameter is effective from psql after database server restart:
+
+```sql
+SHOW shared_preload_libraries;
 ```
 
 [Back to Table of contents](#table-of-contents)
