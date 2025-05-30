@@ -1,5 +1,4 @@
- 
-rt PGDATA=/opt/postgres/data                                                                                                 
+export PGDATA=/opt/postgres/data                                                                                                 
 echo -e "\nMake backup of the postgresql.conf"                                                                                   
 echo "cp ${PGDATA}/postgresql.conf ${PGDATA}/postgresql.conf_back"                                                               
 cp ${PGDATA}/postgresql.conf ${PGDATA}/postgresql.conf_back                                                                      
