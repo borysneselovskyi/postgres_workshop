@@ -1,5 +1,7 @@
 # Performance exercises
 
+Questions and answers: Piotr Kolodziej, EDB (piotr.kolodziej@enterprisedb.com)
+
 ## Table of contents
 
 - [1 Before we begin](#1-before-we-begin)
