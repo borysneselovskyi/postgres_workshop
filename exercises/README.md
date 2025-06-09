@@ -1,6 +1,6 @@
 # Performance exercises
 
-Questions and answers: Piotr Kolodziej, EDB (piotr.kolodziej@enterprisedb.com)
+Questions and maintenance: Piotr Kolodziej, EDB (piotr.kolodziej@enterprisedb.com)
 
 ## Table of contents
 
